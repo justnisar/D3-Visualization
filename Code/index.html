@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<html>
+<span>Please Select Your Year: </span><select id="yearselect">
+  <option class="year" value="2012" selected>2012</option>
+  <option class="year" value="2013">2013</option>
+  <option class="year" value="2011">2011</option>
+  <option class="year" value="2010">2010</option>
+  <option class="year" value="2009">2009</option>
+  <option class="year" value="2008">2008</option>
+  <option class="year" value="2007">2007</option>
+  <option class="year" value="2006">2006</option>
+  <option class="year" value="2005">2005</option>
+  <option class="year" value="2004">2004</option>
+  <option class="year" value="2003">2003</option>
+</select><br>
+<div id="chartContainer">
+  <script src="lib/d3.v3.4.8.js"></script>
+  <script src="dist/dimple.v2.2.0.js"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+  <script type="text/javascript">
+    var svg = dimple.newSvg("#chartContainer", 1200, 1000);
+    dataset = [];
+
+    var yearstart = "2012";
+
+    d3.csv("data/11yearsMenUSOpenMatches.csv", function (data) {
+        
+        this.dataset = data;
+        console.log(data);
+        // Filter the data for a single channel
+        data = dimple.filterData(data, "year", $('#yearselect').val());
+        
+        // Create the chart
+        var myChart = new dimple.chart(svg, data);
+        myChart.setBounds(60, 30, 1000, 800)
+        
+        // Add an x and 2 y-axes.  When using multiple axes it's
+        // important to assign them to variables to pass to the series
+        var x = myChart.addCategoryAxis("x", "player1");
+        var y1 = myChart.addMeasureAxis("y", "winner1");
+        var y2 = myChart.addCategoryAxis("y", "player2");
+
+        var fs2 = myChart.addMeasureAxis("y", "firstServe2");
+        var avgfs2 = myChart.addMeasureAxis("y", "avgFirstServe2");
+        var total1 = myChart.addMeasureAxis("y", "total1");
+        var total2 = myChart.addMeasureAxis("y", "total2");
+        var ace1 = myChart.addMeasureAxis("y", "ace1");
+        var double1 = myChart.addMeasureAxis("y", "double1");
+
+
+        // Order the x axis by sales value desc
+        //x.addOrderRule("Sales Value", true);
+
+        // Color the sales bars to be highly transparent
+        myChart.assignColor("Sales", "#222222", "#000000", 0.1);
+        
+        // Add the bars mapped to the second y axis
+        myChart.addSeries("Players", dimple.plot.bar, [x, y2]);
+        
+        // Add series for minimum, average and maximum price
+        var min = myChart.addSeries("Ace", dimple.plot.bubble, [x, ace1]);
+        min.aggregate = dimple.aggregateMethod.min;
+        var avg = myChart.addSeries("Average First Serve", dimple.plot.bubble, [x, avgfs2]);
+        avg.aggregate = dimple.aggregateMethod.avg;
+        var max = myChart.addSeries("Double", dimple.plot.bubble, [x, double1]);
+        max.aggregate = dimple.aggregateMethod.max;
+
+        var firstServe2plot = myChart.addSeries("FirstServe2", dimple.plot.bubble, [x,fs2]);
+        var totalPlot = myChart.addSeries("Total", dimple.plot.bubble, [x,total1]);
+
+        
+        // Animate the chart for every date value, any dimension can be passed
+        // here and dimple will animate over its values.
+        myChart.setStoryboard("year");
+        
+        myChart.draw();
+
+
+        d3.select("#yearselect").on("change", function() {
+            var _this = this;
+            console.log(this.value);
+            console.log("Clicked");
+        svg.selectAll("*").remove();
+
+
+
+            //data = dimple.filterData(data, "year", this.value);
+            data = dimple.filterData(dataset, "year", _this.value);
+
+        var myChart = new dimple.chart(svg, data);
+
+
+        myChart.setBounds(60, 30, 1000, 800)
+        
+        // Add an x and 2 y-axes.  When using multiple axes it's
+        // important to assign them to variables to pass to the series
+        var x = myChart.addCategoryAxis("x", "player1");
+        var y1 = myChart.addMeasureAxis("y", "winner1");
+        var y2 = myChart.addCategoryAxis("y", "player2");
+
+        var fs2 = myChart.addMeasureAxis("y", "firstServe2");
+        var avgfs2 = myChart.addMeasureAxis("y", "avgFirstServe2");
+        var total1 = myChart.addMeasureAxis("y", "total1");
+        var total2 = myChart.addMeasureAxis("y", "total2");
+        var ace1 = myChart.addMeasureAxis("y", "ace1");
+        var double1 = myChart.addMeasureAxis("y", "double1");
+
+
+        // Order the x axis by sales value desc
+        //x.addOrderRule("Sales Value", true);
+
+        // Color the sales bars to be highly transparent
+        myChart.assignColor("Sales", "#222222", "#000000", 0.1);
+        
+        // Add the bars mapped to the second y axis
+        myChart.addSeries("Players", dimple.plot.bar, [x, y2]);
+        
+        // Add series for minimum, average and maximum price
+        var min = myChart.addSeries("Ace", dimple.plot.bubble, [x, ace1]);
+        min.aggregate = dimple.aggregateMethod.min;
+        var avg = myChart.addSeries("Average First Serve", dimple.plot.bubble, [x, avgfs2]);
+        avg.aggregate = dimple.aggregateMethod.avg;
+        var max = myChart.addSeries("Double", dimple.plot.bubble, [x, double1]);
+        max.aggregate = dimple.aggregateMethod.max;
+
+        var firstServe2plot = myChart.addSeries("FirstServe2", dimple.plot.bubble, [x,fs2]);
+        var totalPlot = myChart.addSeries("Total", dimple.plot.bubble, [x,total1]);
+
+        
+        // Animate the chart for every date value, any dimension can be passed
+        // here and dimple will animate over its values.
+        myChart.setStoryboard("year");
+
+            myChart.draw(1000);
+
+        });
+
+
+      });
+
+  </script>
+</div>
+</html>
